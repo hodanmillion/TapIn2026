@@ -1701,68 +1701,22 @@ export default function AppPage() {
       <div className="min-h-[100dvh] safe-bottom safe-horizontal flex flex-col bg-background">
         <header className="sticky top-0 z-50 glass border-b border-border/50 safe-top safe-horizontal backdrop-blur-xl">
           <div className="max-w-4xl mx-auto px-4 py-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 flex-shrink-0">
-                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-500/30 to-blue-500/30 flex items-center justify-center backdrop-blur-sm border border-cyan-400/20 flex-shrink-0">
-                    <MapPin className="w-6 h-6 text-cyan-400" />
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <h1 className="font-bold text-lg truncate">{searchedLocation ? searchedLocation.name : (location?.name || 'Nearby')}</h1>
-                    <p className="text-xs text-muted-foreground whitespace-nowrap">{nearbyPeople.length} people around you</p>
-                  </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3 flex-shrink-0">
+                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-500/30 to-blue-500/30 flex items-center justify-center backdrop-blur-sm border border-cyan-400/20 flex-shrink-0">
+                  <MapPin className="w-6 h-6 text-cyan-400" />
                 </div>
-                
-                <Link href="/app/settings" className="flex-shrink-0 sm:hidden">
-                  <Button variant="ghost" size="icon" className="rounded-xl">
-                    <Settings className="w-5 h-5" />
-                  </Button>
-                </Link>
+                <div className="flex flex-col min-w-0">
+                  <h1 className="font-bold text-lg truncate">{searchedLocation ? searchedLocation.name : (location?.name || 'Nearby')}</h1>
+                  <p className="text-xs text-muted-foreground whitespace-nowrap">{nearbyPeople.length} people around you</p>
+                </div>
               </div>
               
-              <div className="flex items-center gap-2 flex-1 sm:max-w-md">
-                <div className="relative flex-1">
-                  <Input
-                    placeholder="Search address..."
-                    value={searchAddress}
-                    onChange={(e) => setSearchAddress(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleAddressSearch()}
-                    className="bg-secondary/50 border-border/50 rounded-xl h-10 pr-20"
-                    disabled={isSearching}
-                  />
-                  <div className="absolute right-1 top-1 flex gap-1">
-                    {searchedLocation && (
-                      <Button
-                        onClick={clearSearch}
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 rounded-lg"
-                        title="Return to current location"
-                      >
-                        <Target className="w-4 h-4 text-cyan-400" />
-                      </Button>
-                    )}
-                    <Button
-                      onClick={handleAddressSearch}
-                      disabled={!searchAddress.trim() || isSearching}
-                      size="icon"
-                      className="h-8 w-8 rounded-lg bg-cyan-500 hover:bg-cyan-600"
-                    >
-                      {isSearching ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Search className="w-4 h-4" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-                
-                <Link href="/app/settings" className="hidden sm:flex flex-shrink-0">
-                  <Button variant="ghost" size="icon" className="rounded-xl">
-                    <Settings className="w-5 h-5" />
-                  </Button>
-                </Link>
-              </div>
+              <Link href="/app/settings" className="flex-shrink-0">
+                <Button variant="ghost" size="icon" className="rounded-xl">
+                  <Settings className="w-5 h-5" />
+                </Button>
+              </Link>
             </div>
           </div>
         </header>

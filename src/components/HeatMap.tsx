@@ -467,26 +467,12 @@ function MapClickHandler({ onClick }: { onClick?: (lat: number, lng: number) => 
 
 export function HeatMap({ people, center, currentUserLocation, onPersonClick, areaStats, onAreaClick, onPhotoClick, onMapClick, photos = [] }: HeatMapProps) {
   const [centerLat, centerLng] = center
-  const [searchedLocation, setSearchedLocation] = useState<{ lat: number; lng: number; name: string } | null>(null)
   const [showActivityPanel, setShowActivityPanel] = useState(false)
+  const [activityLocation, setActivityLocation] = useState<{ lat: number; lng: number; name: string } | null>(null)
   const memoCenter = useMemo(() => [centerLat, centerLng] as [number, number], [centerLat, centerLng])
   
-  const handleSearchResult = useCallback((lat: number, lng: number, name: string) => {
-    setSearchedLocation({ lat, lng, name })
-    setShowActivityPanel(true)
-  }, [])
-
-  useEffect(() => {
-    if (searchedLocation && !showActivityPanel) {
-      const timer = setTimeout(() => {
-        setSearchedLocation(null)
-      }, 10000)
-      return () => clearTimeout(timer)
-    }
-  }, [searchedLocation, showActivityPanel])
-
   const heatPoints: [number, number, number][] = []
-  const zoomLevel = areaStats && Object.keys(areaStats).length > 1 ? 4 : searchedLocation ? 13 : 13
+  const zoomLevel = areaStats && Object.keys(areaStats).length > 1 ? 4 : 13
   const totalUsers = areaStats
     ? Object.values(areaStats).reduce((sum, s) => sum + s.userCount, 0)
     : people.length
@@ -548,33 +534,21 @@ export function HeatMap({ people, center, currentUserLocation, onPersonClick, ar
       </div>
 
       <MapContainer
-        center={searchedLocation ? [searchedLocation.lat, searchedLocation.lng] : memoCenter}
+        center={memoCenter}
         zoom={zoomLevel}
         minZoom={2}
         className="w-full h-full rounded-2xl overflow-hidden border border-white/5 shadow-[0_20px_80px_rgba(14,165,233,0.15)]"
         style={{ minHeight: "400px" }}
       >
-        <SearchBar onSearchResult={handleSearchResult} />
         <ViewportInfo people={people} areaStats={areaStats} />
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png"
         />
-        <Recenter centerLat={searchedLocation?.lat || centerLat} centerLng={searchedLocation?.lng || centerLng} zoom={zoomLevel} />
+        <Recenter centerLat={centerLat} centerLng={centerLng} zoom={zoomLevel} />
         <HeatLayer points={heatPoints} />
         <FitAllControl points={boundsPoints} />
         <MapClickHandler onClick={onMapClick} />
         
-        {searchedLocation && (
-          <Marker position={[searchedLocation.lat, searchedLocation.lng]} icon={searchIcon}>
-            <Popup>
-              <div className="text-center p-2">
-                <strong className="text-base">{searchedLocation.name}</strong>
-                <p className="text-xs text-gray-500 mt-1">Searched location</p>
-              </div>
-            </Popup>
-          </Marker>
-        )}
-
         {currentUserLocation && (
           <Marker position={currentUserLocation} icon={currentUserIcon}>
             <Popup>
@@ -681,18 +655,6 @@ export function HeatMap({ people, center, currentUserLocation, onPersonClick, ar
           </Marker>
         ))}
       </MapContainer>
-
-      {showActivityPanel && searchedLocation && (
-        <ActivityPanel
-          lat={searchedLocation.lat}
-          lng={searchedLocation.lng}
-          locationName={searchedLocation.name}
-          onClose={() => {
-            setShowActivityPanel(false)
-            setSearchedLocation(null)
-          }}
-        />
-      )}
 
       <div className="absolute bottom-3 right-3 z-[1000] px-3 py-2 rounded-xl bg-black/65 border border-emerald-400/30 text-xs text-emerald-50 shadow-lg shadow-emerald-400/15">
         <div className="font-semibold">Live heat • updated</div>

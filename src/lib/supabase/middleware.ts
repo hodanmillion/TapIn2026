@@ -2,6 +2,19 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
+  // Handle OPTIONS preflight requests
+  if (request.method === 'OPTIONS') {
+    return new NextResponse(null, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Max-Age': '86400',
+      },
+    })
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -28,6 +41,11 @@ export async function updateSession(request: NextRequest) {
   )
 
   await supabase.auth.getUser()
+
+  // Add CORS headers to all responses
+  supabaseResponse.headers.set('Access-Control-Allow-Origin', '*')
+  supabaseResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+  supabaseResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
 
   return supabaseResponse
 }
