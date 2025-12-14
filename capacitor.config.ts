@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'TapIn',
   webDir: '.next',
   server: {
-    url: 'https://tapin-connect.vercel.app',
+    url: 'http://localhost:3000',
     cleartext: true
   }
 };
